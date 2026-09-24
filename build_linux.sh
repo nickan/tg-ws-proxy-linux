@@ -95,6 +95,9 @@ cp -r "$SCRIPT_DIR/utils" "$APPDIR/usr/share/tg-ws-proxy/"
 cp "$SCRIPT_DIR/linux.py" "$APPDIR/usr/share/tg-ws-proxy/"
 cp "$SCRIPT_DIR/icon.ico" "$APPDIR/usr/share/tg-ws-proxy/"
 
+mkdir -p "$APPDIR/usr/share/fonts/truetype"
+cp "$SCRIPT_DIR/ui/fonts/"*.otf "$APPDIR/usr/share/fonts/truetype/"
+
 # 6. Конвертация и размещение иконки
 echo "--- Создание иконки ---"
 "$PY_BIN" -c "
@@ -146,6 +149,7 @@ for g in /usr/lib64/girepository-1.0 /usr/lib/girepository-1.0 /usr/lib/x86_64-l
 done
 
 export PATH="$HERE/usr/bin:$PATH"
+export XDG_DATA_DIRS="$HERE/usr/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}"
 
 # Tcl/Tk библиотеки для GUI
 if [ -d "$HERE/usr/lib/tcl9.0" ]; then

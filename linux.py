@@ -1,11 +1,34 @@
 # -*- coding: utf-8 -*-
 
+import ctypes
 import os
 import subprocess
 import sys
 import threading
 import time
 from typing import Optional
+
+
+def _register_bundled_fonts():
+    fonts_dir = os.path.join(os.path.dirname(__file__), "ui", "fonts")
+    if not os.path.isdir(fonts_dir):
+        return
+    for libname in ("libfontconfig.so.1", "libfontconfig.so.2", "libfontconfig.so"):
+        try:
+            fc = ctypes.CDLL(libname)
+            fc.FcInit()
+            fc.FcConfigAppFontAddDir.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+            fc.FcConfigAppFontAddDir.restype = ctypes.c_bool
+            fc.FcConfigAppFontAddDir(None, fonts_dir.encode("utf-8"))
+            for f in os.listdir(fonts_dir):
+                if f.endswith((".otf", ".ttf")):
+                    fc.FcConfigAppFontAddFile(None, os.path.join(fonts_dir, f).encode("utf-8"))
+            break
+        except Exception:
+            pass
+
+
+_register_bundled_fonts()
 
 import customtkinter as ctk
 import pyperclip

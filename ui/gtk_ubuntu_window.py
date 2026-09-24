@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+import ctypes
 import os
 import socket
 import subprocess
@@ -7,6 +6,29 @@ import sys
 import threading
 import time
 from typing import Any, Callable, Dict, Optional
+
+
+def register_bundled_fonts():
+    """Регистрирует упакованные шрифты Cantarell и Source Code Pro в Fontconfig."""
+    fonts_dir = os.path.join(os.path.dirname(__file__), "fonts")
+    if not os.path.isdir(fonts_dir):
+        return
+    for libname in ("libfontconfig.so.1", "libfontconfig.so.2", "libfontconfig.so"):
+        try:
+            fc = ctypes.CDLL(libname)
+            fc.FcInit()
+            fc.FcConfigAppFontAddDir.argtypes = [ctypes.c_void_p, ctypes.c_char_p]
+            fc.FcConfigAppFontAddDir.restype = ctypes.c_bool
+            fc.FcConfigAppFontAddDir(None, fonts_dir.encode("utf-8"))
+            for f in os.listdir(fonts_dir):
+                if f.endswith((".otf", ".ttf")):
+                    fc.FcConfigAppFontAddFile(None, os.path.join(fonts_dir, f).encode("utf-8"))
+            break
+        except Exception:
+            pass
+
+
+register_bundled_fonts()
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -692,12 +714,12 @@ class GtkUbuntuWindow:
                         self._log_pos = f.tell()
                         if new_content:
                             end_iter = self.log_buffer.get_end_iter()
-                            self.log_buffer.insert(end_iter, new_content)
+                            self.log_buffer.insert(end_iter, new_content, -1)
                             if hasattr(self, "log_scroller"):
                                 adj = self.log_scroller.get_vadjustment()
                                 GLib.idle_add(lambda: adj.set_value(adj.get_upper() - adj.get_page_size()))
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Log poll error: {e}")
         return True
 
     def _on_delete_event(self, widget, event):
