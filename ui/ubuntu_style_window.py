@@ -578,8 +578,10 @@ class UbuntuAppWindow:
         )
         btn_cl.pack(side="left")
 
-        # Терминал логов в легендарном стиле Ubuntu Terminal Aubergine
-        term_frame = tk.Frame(self.page_logs, bg=c["terminal_bg"], bd=1, relief="solid")
+        # Терминал логов серым цветом как инпуты
+        term_bg = "#383838"
+        term_fg = "#F0F0F0"
+        term_frame = tk.Frame(self.page_logs, bg=term_bg, bd=1, relief="solid")
         term_frame.pack(fill="both", expand=True)
 
         scrollbar = tk.Scrollbar(term_frame)
@@ -588,14 +590,14 @@ class UbuntuAppWindow:
         self.txt_terminal = tk.Text(
             term_frame,
             wrap="word",
-            bg=c["terminal_bg"],
-            fg=c["terminal_fg"],
+            bg=term_bg,
+            fg=term_fg,
             insertbackground="#FFFFFF",
             font=FONT_MONO,
             yscrollcommand=scrollbar.set,
             bd=0,
-            padx=10,
-            pady=8,
+            padx=12,
+            pady=10,
         )
         self.txt_terminal.pack(side="left", fill="both", expand=True)
         scrollbar.config(command=self.txt_terminal.yview)
@@ -608,16 +610,87 @@ class UbuntuAppWindow:
         body = tk.Frame(card, bg=c["card_bg"])
         body.pack(fill="both", expand=True, padx=16, pady=(0, 16))
 
-        tk.Label(body, text="TG WS Proxy для Linux", font=(FONT_FAMILY, 14, "bold"), fg=c["text_title"], bg=c["card_bg"]).pack(anchor="w", pady=4)
-        tk.Label(body, text=f"Версия ядра: {__version__}", font=(FONT_FAMILY, 10), fg=c["orange"], bg=c["card_bg"]).pack(anchor="w", pady=2)
-        tk.Label(body, text="Дизайн: Ubuntu Yaru / GNOME Dark", font=(FONT_FAMILY, 10), fg=c["text_muted"], bg=c["card_bg"]).pack(anchor="w", pady=2)
+        tk.Label(body, text="TG WS Proxy for Linux", font=(FONT_FAMILY, 14, "bold"), fg=c["text_title"], bg=c["card_bg"]).pack(anchor="w", pady=2)
+        tk.Label(body, text=f"Версия ядра: {__version__}", font=(FONT_FAMILY, 10, "bold"), fg=c["orange"], bg=c["card_bg"]).pack(anchor="w", pady=1)
+        tk.Label(body, text="Разработка Linux-версии: Евгений Копылов (@nickan)", font=(FONT_FAMILY, 10), fg=c["text_muted"], bg=c["card_bg"]).pack(anchor="w", pady=1)
+        tk.Label(body, text="Базовый проект: tg-ws-proxy-android от @amurcanov", font=(FONT_FAMILY, 10), fg=c["text_muted"], bg=c["card_bg"]).pack(anchor="w", pady=1)
 
         desc = (
-            "\nПрокси-клиент с защитой трафика MTProto через Cloudflare WebSocket.\n"
-            "Позволяет обойти любые ограничения и блокировки ТСПУ без замедлений.\n\n"
-            "Собрано в полностью автономный пакет AppImage для любых версий Linux."
+            "Данная программа разработана для комфортной работы Telegram Desktop в Linux. "
+            "Создана на базе мобильного ядра tg-ws-proxy-android (автор amurcanov) с нативным "
+            "интерфейсом в стиле Ubuntu, поддержкой системных шрифтов и автообходом цензуры."
         )
         tk.Label(body, text=desc, font=(FONT_FAMILY, 10), fg=c["text_body"], bg=c["card_bg"], justify="left", wraplength=520).pack(anchor="w", pady=6)
+
+        # Ссылки GitHub
+        row_links = tk.Frame(body, bg=c["card_bg"])
+        row_links.pack(fill="x", pady=4)
+        tk.Button(
+            row_links,
+            text="GitHub автора (@nickan)",
+            font=(FONT_FAMILY, 9),
+            bg=c["btn_bg"],
+            fg="#FFFFFF",
+            relief="flat",
+            padx=10,
+            pady=4,
+            command=lambda: subprocess.Popen(["xdg-open", "https://github.com/nickan"]),
+        ).pack(side="left", padx=(0, 8))
+
+        tk.Button(
+            row_links,
+            text="Базовый репозиторий (@amurcanov)",
+            font=(FONT_FAMILY, 9),
+            bg=c["btn_bg"],
+            fg="#FFFFFF",
+            relief="flat",
+            padx=10,
+            pady=4,
+            command=lambda: subprocess.Popen(["xdg-open", "https://github.com/amurcanov/tg-ws-proxy-android"]),
+        ).pack(side="left")
+
+        # Карточка ускорителя сервисов @nncore_bot
+        card_accel = self._create_adwaita_card(self.page_about, "Ускорение других сервисов")
+        body_accel = tk.Frame(card_accel, bg=c["card_bg"])
+        body_accel.pack(fill="both", expand=True, padx=16, pady=(0, 16))
+
+        tk.Label(
+            body_accel,
+            text="Оптимизация скорости и надежный скоростной доступ для всех остальных онлайн-сервисов, сайтов и приложений через Telegram-бота:",
+            font=(FONT_FAMILY, 10),
+            fg=c["text_body"],
+            bg=c["card_bg"],
+            justify="left",
+            wraplength=520,
+        ).pack(anchor="w", pady=4)
+
+        tk.Button(
+            body_accel,
+            text="🚀  Ускоритель для других сервисов (@nncore_bot)",
+            font=(FONT_FAMILY, 10, "bold"),
+            bg=c["orange"],
+            fg="#FFFFFF",
+            activebackground=c["orange_hover"],
+            activeforeground="#FFFFFF",
+            relief="flat",
+            bd=0,
+            padx=16,
+            pady=8,
+            command=lambda: subprocess.Popen(["xdg-open", "https://t.me/nncore_bot"]),
+        ).pack(anchor="w", pady=4)
+
+        # Карточка совместимости
+        card_compat = self._create_adwaita_card(self.page_about, "Поддерживаемые версии Linux")
+        body_compat = tk.Frame(card_compat, bg=c["card_bg"])
+        body_compat.pack(fill="both", expand=True, padx=16, pady=(0, 16))
+
+        compat_text = (
+            "• Архитектура: x86_64 (64-bit)\n"
+            "• Совместимость glibc: 2.17+ (работает на всех версиях Linux)\n"
+            "• Протестировано: Ubuntu (18.04-24.04+), Debian (10-12+), Linux Mint, "
+            "openSUSE, Fedora, Arch Linux, Astra Linux, РЕД ОС"
+        )
+        tk.Label(body_compat, text=compat_text, font=(FONT_FAMILY, 9), fg=c["text_muted"], bg=c["card_bg"], justify="left").pack(anchor="w", pady=2)
 
     # ========================== ПЕРЕКЛЮЧЕНИЕ СТРАНИЦ ==========================
     def switch_page(self, page_id: str):

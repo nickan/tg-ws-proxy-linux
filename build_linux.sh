@@ -130,8 +130,21 @@ HERE="$(dirname "$(readlink -f "$0")")"
 
 # Настройка Python и путей поиска модулей
 export PYTHONHOME="$HERE/usr"
-export PYTHONPATH="$HERE/usr/share/tg-ws-proxy:$HERE/usr/lib/python3.11/site-packages:/usr/lib64/python3.11/site-packages:/usr/lib/python3/dist-packages:$PYTHONPATH"
-export GI_TYPELIB_PATH="/usr/lib64/girepository-1.0:/usr/lib/girepository-1.0:/usr/lib/x86_64-linux-gnu/girepository-1.0:$GI_TYPELIB_PATH"
+export PYTHONPATH="$HERE/usr/share/tg-ws-proxy:$HERE/usr/lib/python3.11/site-packages"
+
+# Подключение системного PyGObject (GTK3) для любых версий Linux (Ubuntu, Debian, Fedora, openSUSE, Arch)
+for p in /usr/lib/python3*/dist-packages /usr/lib64/python3*/site-packages /usr/local/lib/python3*/dist-packages /usr/lib/python3*/site-packages; do
+    if [ -d "$p" ]; then
+        export PYTHONPATH="$PYTHONPATH:$p"
+    fi
+done
+
+for g in /usr/lib64/girepository-1.0 /usr/lib/girepository-1.0 /usr/lib/x86_64-linux-gnu/girepository-1.0; do
+    if [ -d "$g" ]; then
+        export GI_TYPELIB_PATH="$GI_TYPELIB_PATH:$g"
+    fi
+done
+
 export PATH="$HERE/usr/bin:$PATH"
 
 # Tcl/Tk библиотеки для GUI
