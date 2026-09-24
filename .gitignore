@@ -1,0 +1,31 @@
+# Сборки и кэш AppImage
+build_appimage/
+dist/
+*.AppImage
+
+# Виртуальные окружения Python
+venv/
+venv_build/
+.env
+
+# Временные файлы и байт-код
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Логи и блокировки
+*.log
+*.lock
+.config/
+
+# Бэкапы и архивы
+*.backup_*
+*.bak*
+*.tar.gz
+build/
+
+# Временные файлы IDE
+.tempmediaStorage/
+.user_uploaded/
+.system_generated/
