@@ -516,8 +516,7 @@ class GtkUbuntuWindow:
 
         hb_links = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
         btn_nickan = Gtk.Button(label="GitHub автора Linux-версии (@nickan)")
-        btn_nickan.get_style_context().add_class("btn-orange")
-        btn_nickan.set_name("btn_orange")
+        btn_nickan.get_style_context().add_class("btn-secondary")
         btn_nickan.connect("clicked", lambda w: subprocess.Popen(["xdg-open", "https://github.com/nickan"]))
         hb_links.pack_start(btn_nickan, False, False, 0)
 
@@ -528,6 +527,31 @@ class GtkUbuntuWindow:
 
         c1.pack_start(hb_links, False, False, 4)
         vbox.pack_start(c1, False, False, 0)
+
+        # Карточка 2: Ускоритель для других сервисов
+        c_accel = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        c_accel.get_style_context().add_class("ubuntu-card")
+
+        lbl_accel = Gtk.Label(label="Ускорение других сервисов")
+        lbl_accel.set_xalign(0)
+        lbl_accel.get_style_context().add_class("card-title")
+        c_accel.pack_start(lbl_accel, False, False, 0)
+
+        lbl_accel_desc = Gtk.Label(
+            label="Оптимизация скорости и надежный скоростной доступ для всех остальных "
+                  "онлайн-сервисов, сайтов и приложений через Telegram-бота:"
+        )
+        lbl_accel_desc.set_xalign(0)
+        lbl_accel_desc.set_line_wrap(True)
+        c_accel.pack_start(lbl_accel_desc, False, False, 2)
+
+        btn_bot = Gtk.Button(label="Ускоритель для других сервисов (@nncore_bot)")
+        btn_bot.set_name("btn_orange")
+        btn_bot.get_style_context().add_class("btn-orange")
+        btn_bot.connect("clicked", lambda w: subprocess.Popen(["xdg-open", "https://t.me/nncore_bot"]))
+        c_accel.pack_start(btn_bot, False, False, 4)
+
+        vbox.pack_start(c_accel, False, False, 0)
 
         # Карточка 2: Совместимость с версиями Linux
         c2 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
@@ -712,6 +736,14 @@ class GtkUbuntuWindow:
                         data = conn.recv(64)
                         if b"SHOW" in data:
                             self.restore_window()
+                        elif b"TAB" in data:
+                            try:
+                                parts = data.strip().split()
+                                if len(parts) >= 2:
+                                    idx = int(parts[1])
+                                    GLib.idle_add(self.notebook.set_current_page, idx)
+                            except Exception:
+                                pass
                         conn.close()
                     except socket.timeout:
                         continue
